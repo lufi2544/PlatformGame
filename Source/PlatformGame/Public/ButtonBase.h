@@ -60,6 +60,9 @@ public:
 	UPROPERTY(EditAnywhere , Category = "ButtonBase" , meta = (DisplayName = "DeactivationTime"))
 	float fActivatedTime;
 
+	UPROPERTY(EditDefaultsOnly, Category= "ButtonBase" ,meta = (DisplayName = "IsCollaborative") )
+	bool bIsCollaborative;
+
 
 	FTimerHandle TimeHandle;
 
@@ -70,6 +73,10 @@ public:
 	void OnUnpushButton();
 
 	void AddTargetsToReachOnActivationToPlatformArray(TArray<ATargetPointBase*> TargetPoints);
+
+	void ActiveButton(bool bButtonState);
+
+	void DesactiveButton(bool bButtonState);
 
 	//DELEGATES
 

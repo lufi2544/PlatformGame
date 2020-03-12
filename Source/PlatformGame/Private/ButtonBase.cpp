@@ -75,6 +75,8 @@ void AButtonBase::OnUnpushButton()
 
 }
 
+
+
 void AButtonBase::AddTargetsToReachOnActivationToPlatformArray(TArray<ATargetPointBase*> TargetPoints)
 {
 
@@ -82,15 +84,30 @@ void AButtonBase::AddTargetsToReachOnActivationToPlatformArray(TArray<ATargetPoi
 
 	if (TargetPoints.Num() > 0) 
 	{
-		for (ATargetPointBase* Target : TargetPoints)
-		{
+		
+		MovingPlatformToInteract->SetTargetsToReachOnPush(TargetPoints);
 
-			MovingPlatformToInteract->TargetsToReachOnButonPush.Add(Target);
-
-		}
-	
 	}
 
+
+}
+
+
+
+void AButtonBase::ActiveButton(bool bButtonState)
+{
+
+	if (!ensure(MovingPlatformToInteract)) { return; }
+
+	MovingPlatformToInteract->SetIsButtonActivated(true);
+
+}
+
+void AButtonBase::DesactiveButton(bool bButtonState)
+{
+	if (!ensure(MovingPlatformToInteract)) { return; }
+
+	MovingPlatformToInteract->SetIsButtonActivated(false);
 
 }
 
@@ -98,28 +115,64 @@ void AButtonBase::AddTargetsToReachOnActivationToPlatformArray(TArray<ATargetPoi
 
 void AButtonBase::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if( TargetsToReachOnActivation.Num() > 0 )
 
-	OnPushButton();
+	if (MovingPlatformToInteract->GetIsCollaborativeState())
+	{
+
+		ActiveButton(true);
+
+		UE_LOG(LogTemp , Warning ,TEXT("Collaborative"));
+
+		MovingPlatformToInteract->SetbCanMove(true);
+
+	}
+	else
+	{
+
+		UE_LOG(LogTemp, Warning, TEXT("Collaborative"));
+
+		if (TargetsToReachOnActivation.Num() > 0)
+
+			OnPushButton();
 
 
-	if (bHasTimer)
+		if (bHasTimer)
 		{
 
-	GetWorldTimerManager().SetTimer(TimeHandle, this, &AButtonBase::OnUnpushButton, fActivatedTime, false);
+			GetWorldTimerManager().SetTimer(TimeHandle, this, &AButtonBase::OnUnpushButton, fActivatedTime, false);
+
 		}
+
 	}
+}
 
 
 void AButtonBase::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) 
 {
-
-	UE_LOG(LogTemp , Warning , TEXT("End Overlapping!!"));
-	if (bIsPositionOnly) 
+	if (MovingPlatformToInteract->GetIsCollaborativeState())
 	{
-	
-		OnUnpushButton();
-	
+
+		DesactiveButton(false);
+
+		MovingPlatformToInteract->SetbCanMove(true);
+
+	}
+	else
+	{
+
+
+
+		if (bIsPositionOnly)
+		{
+
+			OnUnpushButton();
+
+		}
+
+
 	}
 
+
 }
+
+
