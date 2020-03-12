@@ -11,6 +11,7 @@
 
 class AMovingPlatformBase;
 class UBoxComponent;
+class ATargetPointBase;
 
 
 UCLASS()
@@ -36,13 +37,39 @@ public:
 
 	//ThePlatform the Button is going to interact with.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ButtonBase")
-		AMovingPlatformBase* MovingPlatformToInteract;
+	AMovingPlatformBase* MovingPlatformToInteract;
 
 	UPROPERTY(VisibleAnywhere)
-		UBoxComponent* BoxComponent;
+	UBoxComponent* BoxComponent;
 
+	/*Targets that the platform will reach on activation*/
+	UPROPERTY(EditAnywhere, Category = "ButtonBase")
+	TArray<ATargetPointBase*> TargetsToReachOnActivation;
+
+	/*If true the current button just affects the platform if the player is on top of it.
+	  If Has Timer is activated, it will be automatically desactivated.
+	*/
+	UPROPERTY(EditAnywhere, Category = "ButtonBase" , meta = (DisplayName = "IsPositionOnly"))
+	bool bIsPositionOnly;
+
+	/*Determines wether the button has a timer which deactivates the function activated when pushed the button*/
+	UPROPERTY(EditAnywhere ,  Category = "ButtonBase" , meta=(DisplayName ="HasTimer"))
+	bool bHasTimer;
+
+	/*Time that the activated function by the button will last (if HasTimer is true) */
+	UPROPERTY(EditAnywhere , Category = "ButtonBase" , meta = (DisplayName = "DeactivationTime"))
+	float fActivatedTime;
+
+
+	FTimerHandle TimeHandle;
 
 	//FUNCTIONS
+
+	void OnPushButton();
+
+	void OnUnpushButton();
+
+	void AddTargetsToReachOnActivationToPlatformArray(TArray<ATargetPointBase*> TargetPoints);
 
 	//DELEGATES
 
@@ -50,8 +77,8 @@ public:
 		UFUNCTION()
 		void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-
-
+		UFUNCTION()
+		void OnComponentEndOverlap( UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 };
 

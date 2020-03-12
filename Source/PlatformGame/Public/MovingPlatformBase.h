@@ -45,15 +45,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlatformBase", meta = (ClampMin = -2.f), meta = (ClampMax = 2.f), meta = (DisplayName = "Speed"))
 		float fSpeed = 1.f;
 
-	//Targets that the platform will move between when we push a button
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlatformBase")
-		TArray<ATargetPointBase*>TargetsToReachOnButonPush;
-
 	//Changes the mode to as if a button would have triggered the current platform
 	UPROPERTY(EditAnywhere, Category = "PlatformBase")
 		bool IsButtonActive;
 
 
+	//Targets that the platform will move between when we push a button
+	TArray<ATargetPointBase*>TargetsToReachOnButonPush;
 
 	bool bIsReaching = false;
 

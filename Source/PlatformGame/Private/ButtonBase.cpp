@@ -3,6 +3,10 @@
 
 #include "ButtonBase.h"
 #include "MovingPlatformBase.h"
+
+
+#include "TargetPointBase.h"
+#include "TimerManager.h"
 #include "Components/BoxComponent.h"
 
 
@@ -21,12 +25,27 @@ AButtonBase::AButtonBase()
 	RootComponent = BoxComponent;
 
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AButtonBase::OnComponentBeginOverlap);
+
+
+	BoxComponent->OnComponentEndOverlap.AddDynamic(this, &AButtonBase::OnComponentEndOverlap);
+
+	if (bIsPositionOnly)
+	{
+		bHasTimer = false;
+
+	}
+
+	
 }
 
 // Called when the game starts or when spawned
 void AButtonBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+
+	AddTargetsToReachOnActivationToPlatformArray(TargetsToReachOnActivation);
+	
 	
 }
 
@@ -39,9 +58,8 @@ void AButtonBase::Tick(float DeltaTime)
 
 }
 
-//DELEGATES
 
-void AButtonBase::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AButtonBase::OnPushButton() 
 {
 	if (!ensure(MovingPlatformToInteract)) { return; }
 
@@ -49,3 +67,59 @@ void AButtonBase::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 
 }
 
+void AButtonBase::OnUnpushButton() 
+{
+	if (!ensure(MovingPlatformToInteract)) { return; }
+
+	MovingPlatformToInteract->OnControlButtonPushed(false);
+
+}
+
+void AButtonBase::AddTargetsToReachOnActivationToPlatformArray(TArray<ATargetPointBase*> TargetPoints)
+{
+
+	if ( !ensure( MovingPlatformToInteract ) ) { return; }
+
+	if (TargetPoints.Num() > 0) 
+	{
+		for (ATargetPointBase* Target : TargetPoints)
+		{
+
+			MovingPlatformToInteract->TargetsToReachOnButonPush.Add(Target);
+
+		}
+	
+	}
+
+
+}
+
+//DELEGATES
+
+void AButtonBase::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if( TargetsToReachOnActivation.Num() > 0 )
+
+	OnPushButton();
+
+
+	if (bHasTimer)
+		{
+
+	GetWorldTimerManager().SetTimer(TimeHandle, this, &AButtonBase::OnUnpushButton, fActivatedTime, false);
+		}
+	}
+
+
+void AButtonBase::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) 
+{
+
+	UE_LOG(LogTemp , Warning , TEXT("End Overlapping!!"));
+	if (bIsPositionOnly) 
+	{
+	
+		OnUnpushButton();
+	
+	}
+
+}
