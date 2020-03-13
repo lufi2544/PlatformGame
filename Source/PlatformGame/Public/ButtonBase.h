@@ -53,7 +53,7 @@ public:
 	bool bIsPositionOnly;
 
 	/*Determines wether the button has a timer which deactivates the function activated when pushed the button*/
-	UPROPERTY(EditAnywhere ,  Category = "ButtonBase" , meta=(DisplayName ="HasTimer"))
+	UPROPERTY(EditAnywhere , BlueprintReadWrite,  Category = "ButtonBase" , meta=(DisplayName ="HasTimer"))
 	bool bHasTimer;
 
 	/*Time that the activated function by the button will last (if HasTimer is true) */
@@ -68,6 +68,11 @@ public:
 
 	//FUNCTIONS
 
+	UFUNCTION(BlueprintImplementableEvent , meta = (DisplayName = "On Timer Finish"))
+	void OnTimerFinish();
+
+
+
 	void OnPushButton();
 
 	void OnUnpushButton();
@@ -77,6 +82,9 @@ public:
 	void ActiveButton(bool bButtonState);
 
 	void DesactiveButton(bool bButtonState);
+
+
+
 
 	//DELEGATES
 

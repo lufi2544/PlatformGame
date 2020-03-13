@@ -29,8 +29,15 @@ void UPlatformPuzzleGameInstance::Init()
 void UPlatformPuzzleGameInstance::Host() 
 {
 
+	UWorld* World = GetWorld();
 
 	Engine->AddOnScreenDebugMessage(0, 5.f, FColor::Green, TEXT("Hosting!!"));
+
+	
+	if (!ensure(World)) { return; }
+
+	World->ServerTravel("World'/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap.ThirdPersonExampleMap' listen");
+
 
 }
 

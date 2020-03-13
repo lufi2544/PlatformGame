@@ -73,6 +73,8 @@ void AButtonBase::OnUnpushButton()
 
 	MovingPlatformToInteract->OnControlButtonPushed(false);
 
+	OnTimerFinish();
+
 }
 
 
@@ -166,6 +168,8 @@ void AButtonBase::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent
 		{
 
 			OnUnpushButton();
+
+			
 
 		}
 
