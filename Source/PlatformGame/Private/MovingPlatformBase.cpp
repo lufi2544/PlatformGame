@@ -4,6 +4,7 @@
 #include "MovingPlatformBase.h"
 
 #include "TargetPointBase.h"
+#include "Engine/World.h"
 #include "Engine/BlueprintGeneratedClass.h"
 
 AMovingPlatformBase::AMovingPlatformBase() 
@@ -142,9 +143,9 @@ bool AMovingPlatformBase::PlatformGo(ATargetPointBase* TargetPointA)
 
 
 
-	SetActorLocation(vCurrentActorLocation + nvDistanceToTargetPointA * fSpeed);
+	SetActorLocation(vCurrentActorLocation + nvDistanceToTargetPointA * fSpeed * GetWorld()->GetDeltaSeconds());
 
-	if (GetActorLocation().Equals(vTarget1Location, 2.f))
+	if (GetActorLocation().Equals(vTarget1Location, 5.f))
 	{
 
 		bHasReached = true;
@@ -371,6 +372,8 @@ void AMovingPlatformBase::MoveDataToSparseClassDataStruct() const
 
 
 		SparseClassData->bIsCollaborative = bIsCollaborative_DEPRECATED;
+
+		SparseClassData->nPlatformDefaultName = nDefaultPlatformName_DEPRECATED;
 
 
 #endif

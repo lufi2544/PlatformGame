@@ -21,10 +21,14 @@ struct FMySparseClassData
 
 		FMySparseClassData()
 		: bIsCollaborative(false)
+		, nPlatformDefaultName("NAME_None")
 		{}
 
 	UPROPERTY(EditDefaultsOnly, Category ="PlatformBase" , meta = (DisplayName = "Is Collaborative"))
 	bool bIsCollaborative;
+
+	UPROPERTY(EditDefaultsOnly , Category ="PlatformBase" , meta = (DisplayName = "Platform Default Name"))
+	FName nPlatformDefaultName;
 
 
 };
@@ -58,6 +62,9 @@ private:
 	UPROPERTY()
 	bool bIsCollaborative_DEPRECATED;
 
+	UPROPERTY()
+	FName nDefaultPlatformName_DEPRECATED;
+
 #endif
 
 	//////////////////////////////////
@@ -90,8 +97,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "PlatformBase", meta = (DisplayName = "CanMove"))
 		bool bCanMove;
 
-	UPROPERTY(EditAnywhere, Category = "PlatformBase", meta = (ClampMin = -2.f), meta = (ClampMax = 2.f), meta = (DisplayName = "Speed"))
-		float fSpeed = 1.f;
+	UPROPERTY(EditAnywhere, Category = "PlatformBase", meta = (ClampMin = 0.f), meta = (ClampMax = 500.f), meta = (DisplayName = "Speed"))
+		float fSpeed = 50.f;
 
 	//Changes the mode to as if a button would have triggered the current platform
 	UPROPERTY(EditAnywhere, Category = "PlatformBase")
