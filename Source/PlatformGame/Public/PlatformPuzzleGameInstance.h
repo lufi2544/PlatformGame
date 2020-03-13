@@ -20,5 +20,19 @@ public:
 		UPlatformPuzzleGameInstance(const FObjectInitializer &ObjectInitializer);
 
 		virtual void Init() ;
+
+
+		/*FUNCTIONS*/
 	
+
+		UFUNCTION(Exec)
+		void Host();
+
+		UFUNCTION(Exec)
+		void Join(const FString IP);
+
+
+private:
+
+	UEngine* Engine = nullptr;
 };

@@ -4,11 +4,14 @@
 #include "PlatformPuzzleGameInstance.h"
 
 
+#include "Engine/Engine.h"
+
+
 
 
 UPlatformPuzzleGameInstance::UPlatformPuzzleGameInstance(const FObjectInitializer& ObjectInitializer)
 {
-	UE_LOG(LogTemp, Error, TEXT("Constructor!!"));
+
 
 }
 
@@ -16,8 +19,24 @@ void UPlatformPuzzleGameInstance::Init()
 {
 
 
+	Engine = GetEngine();
+
+	
+
+}
 
 
-	UE_LOG(LogTemp,Error, TEXT("INIT"));
+void UPlatformPuzzleGameInstance::Host() 
+{
+
+
+	Engine->AddOnScreenDebugMessage(0, 5.f, FColor::Green, TEXT("Hosting!!"));
+
+}
+
+void UPlatformPuzzleGameInstance::Join(const FString IP) 
+{
+
+	Engine->AddOnScreenDebugMessage(0, 5.f, FColor::Red,FString::Printf(TEXT("Joining %s"),*IP));
 
 }

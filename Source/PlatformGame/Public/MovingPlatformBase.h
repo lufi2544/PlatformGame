@@ -177,7 +177,6 @@ public:
 	
 
 
-
 	bool PlatformGo(ATargetPointBase* TargetPoint);
 
 	bool PlatformMoveToTatgets(TArray<ATargetPointBase*> Targets, bool bHasRandomMovement);
