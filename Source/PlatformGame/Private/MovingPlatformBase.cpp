@@ -70,12 +70,15 @@ void AMovingPlatformBase::BeginPlay()
 bool AMovingPlatformBase::GetIsCollaborativeState() 
 {
 	//SPARSEDATA PROPERTY
-	return GetIsCollaborative();
+	return bIsCollaborative;
 
 }
 
 
-
+void AMovingPlatformBase::SetIscollaborative(bool b)
+{
+	bIsCollaborative = b;
+}
 
 bool AMovingPlatformBase::GetIsButtonActivated()
 {
@@ -87,8 +90,6 @@ void AMovingPlatformBase::SetIsButtonActivated(bool bNewState)
 
 	bIsButtonActivated = bNewState;
 
-
-
 }
 
 TArray<ATargetPointBase*> AMovingPlatformBase::GetTargetsToReach()
@@ -99,7 +100,14 @@ TArray<ATargetPointBase*> AMovingPlatformBase::GetTargetsToReach()
 void AMovingPlatformBase::SetTargetsToReach(TArray<ATargetPointBase*> NewTargets)
 {
 
-	TargetsToReach = NewTargets;
+	if (TargetsToReach.Num() > 0) 
+	{
+		LastTargetsReached = TargetsToReach;
+
+		TargetsToReach = NewTargets;
+	
+	}
+	
 }
 
 bool AMovingPlatformBase::GetCanMove()
@@ -114,6 +122,21 @@ void AMovingPlatformBase::SetbCanMove(bool bNewMovementState)
 
 }
 
+TArray<ATargetPointBase*> AMovingPlatformBase::GetLastTargetsReached()
+{
+	return LastTargetsReached;
+}
+
+void AMovingPlatformBase::StopPlatformMovement()
+{
+	bCanMove = false;
+}
+
+void AMovingPlatformBase::StartPlatformMovement()
+{
+	bCanMove = true;
+}
+
 TArray<ATargetPointBase*> AMovingPlatformBase::GetTargetsToReachOnPush()
 {
 	return TargetsToReachOnButonPush;
@@ -123,6 +146,7 @@ void AMovingPlatformBase::SetTargetsToReachOnPush(TArray<ATargetPointBase*> NewT
 {
 	TargetsToReachOnButonPush = NewTargets;
 }
+
 
 //FUNCTIONS
 
@@ -165,173 +189,29 @@ bool AMovingPlatformBase::PlatformMoveToTatgets(TArray<ATargetPointBase*> Target
 	bool bSuccess = false;
 
 
-	if (Targets.Num() > 0)
+	if (Targets.Num() > 0) 
 	{
-		if (!GetIsCollaborative()) 
+		if (!bIsCollaborative) 
 		{
-			if (!bHasRandomMovement)
-			{
-
-				if (!bIsReaching)
-				{
-					if (!ensure(Targets[ArrayCounter])) { return false; }
-
-					TargetReaching = Targets[ArrayCounter];
-
-					bIsReaching = true;
-
-				}
-				else
-				{
-					PlatformGo(TargetReaching);
-
-					if (PlatformGo(TargetReaching))
-					{
-						bSuccess = true;
-						bIsReaching = false;
-
-						ArrayCounter++;
-
-						if (ArrayCounter == Targets.Num())
-						{
-
-							ArrayCounter = 0;
-
-						}
-
-
-					}
-
-
-				}
-
-
-			}
-			else
-			{
-
-				if (!bIsReaching)
-				{
-
-					ArrayCounter = FMath::RandRange(0, Targets.Num() - 1);
-
-					if (!ensure(Targets[ArrayCounter])) { return false; }
-
-					TargetReaching = Targets[ArrayCounter];
-
-					bIsReaching = true;
-
-				}
-				else
-				{
-
-					if (TargetReaching != LastTargetReached)
-					{
-						PlatformGo(TargetReaching);
-
-						if (PlatformGo(TargetReaching))
-						{
-							LastTargetReached = TargetReaching;
-							bIsReaching = false;
-							bSuccess = true;
-
-						}
-
-					}
-					else
-					{
-						bIsReaching = false;
-						bSuccess = false;
-
-					}
-
-
-				}
-
-
-
-			}
+		
+			StartBaseMovement(Targets, bHasRandomMovement);
+		
 		}
 		else
 		{
 
-			if (!bIsReaching)
-			{
-				if (!ensure(Targets[ArrayCounter])) { return false; }
-
-				InitialTarget = Targets[0];
-
-				LastTarget = Targets[Targets.Num() - 1];
-
-				bIsReaching = true;
-
-				TargetReaching = Targets[ArrayCounter];
-
-
-
-			}
-			else
-			{
-				if (bIsButtonActivated)
-				{
-					bCanMove = true;
-
-					PlatformGo(TargetReaching);
-
-
-					if (PlatformGo(TargetReaching))
-					{
-						LastTargetReached = TargetReaching;
-						bSuccess = true;
-
-						bIsReaching = false;
-
-						ArrayCounter++;
-
-						if (TargetReaching == LastTarget)
-						{
-
-							bCanMove = false;
-							ArrayCounter = 0;
-						}
-
-
-					}
-
-				}
-				else
-				{
-
-					bCanMove = true;
-					PlatformGo(InitialTarget);
-
-
-
-
-					if (PlatformGo(InitialTarget))
-					{
-						bCanMove = false;
-						LastTargetReached = InitialTarget;
-						
-
-					}
-
-
-				}
-
-
-
-
-			}
-
+			StartCollaborativeMovement(Targets);
 		}
 	
-}
-else
-	{
-	bSuccess = false;
+	
 	}
+	else
+	{
+		bSuccess = false;
 
+		UE_LOG(LogTemp , Error, TEXT("The Targets number is < 0"));
+	}
+	
 	return bSuccess;
 }
 
@@ -345,6 +225,179 @@ bool AMovingPlatformBase::OnControlButtonPushed(bool bIsButtonActive)
 }
 
 
+
+void AMovingPlatformBase::StartCollaborativeMovement(TArray<ATargetPointBase*>Targets)
+{
+
+	bool bSuccess = false;
+
+	if (!bIsReaching)
+	{
+		if (!ensure(Targets[ArrayCounter])) { return ; }
+
+		InitialTarget = Targets[0];
+
+		LastTarget = Targets[Targets.Num() - 1];
+
+		bIsReaching = true;
+
+		TargetReaching = Targets[ArrayCounter];
+
+
+
+	}
+	else
+	{
+		if (bIsButtonActivated)
+		{
+			bCanMove = true;
+
+			PlatformGo(TargetReaching);
+
+
+			if (PlatformGo(TargetReaching))
+			{
+				LastTargetReached = TargetReaching;
+				bSuccess = true;
+
+				bIsReaching = false;
+
+				ArrayCounter++;
+
+				if (TargetReaching == LastTarget)
+				{
+
+					bCanMove = false;
+					ArrayCounter = 0;
+				}
+
+
+			}
+
+		}
+		else
+		{
+
+			bCanMove = true;
+			PlatformGo(InitialTarget);
+
+
+
+
+			if (PlatformGo(InitialTarget))
+			{
+				bCanMove = false;
+				LastTargetReached = InitialTarget;
+
+
+			}
+
+
+		}
+
+
+
+
+	}
+
+}
+
+
+
+
+
+void AMovingPlatformBase::StartBaseMovement(TArray<ATargetPointBase*>Targets, bool bHasRandomMovement)
+{
+	bool bSuccess = false;
+
+	
+	
+		if (!bHasRandomMovement)
+		{
+
+			if (!bIsReaching)
+			{
+				if (!ensure(Targets[ArrayCounter])) { return ; }
+
+				TargetReaching = Targets[ArrayCounter];
+
+				bIsReaching = true;
+
+			}
+			else
+			{
+				PlatformGo(TargetReaching);
+
+				if (PlatformGo(TargetReaching))
+				{
+					bSuccess = true;
+					bIsReaching = false;
+
+					ArrayCounter++;
+
+					if (ArrayCounter == Targets.Num())
+					{
+
+						ArrayCounter = 0;
+
+					}
+
+
+				}
+
+
+			}
+
+
+		}
+		else
+		{
+
+			if (!bIsReaching)
+			{
+
+				ArrayCounter = FMath::RandRange(0, Targets.Num() - 1);
+
+				if (!ensure(Targets[ArrayCounter])) { return ; }
+
+				TargetReaching = Targets[ArrayCounter];
+
+				bIsReaching = true;
+
+			}
+			else
+			{
+
+				if (TargetReaching != LastTargetReached)
+				{
+					PlatformGo(TargetReaching);
+
+					if (PlatformGo(TargetReaching))
+					{
+						LastTargetReached = TargetReaching;
+						bIsReaching = false;
+						bSuccess = true;
+
+					}
+
+				}
+				else
+				{
+					bIsReaching = false;
+					bSuccess = false;
+
+				}
+
+
+			}
+
+
+
+		}
+
+
+
+}
 
 //DELEGATES
 
@@ -370,8 +423,6 @@ void AMovingPlatformBase::MoveDataToSparseClassDataStruct() const
 
 		FMySparseClassData* SparseClassData = GetMySparseClassData();
 
-
-		SparseClassData->bIsCollaborative = bIsCollaborative_DEPRECATED;
 
 		SparseClassData->nPlatformDefaultName = nDefaultPlatformName_DEPRECATED;
 

@@ -9,9 +9,13 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(hideCategories = (PlatformSingleActivation))
 class PLATFORMGAME_API ACollaborativePlatformBase : public AMovingPlatformBase
 {
 	GENERATED_BODY()
 	
+
+public:
+
+	ACollaborativePlatformBase();
 };

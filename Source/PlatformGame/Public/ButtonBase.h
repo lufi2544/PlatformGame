@@ -7,6 +7,20 @@
 #include "ButtonBase.generated.h"
 
 
+
+UENUM(BlueprintType)
+enum class EButtonType : uint8
+{
+	BT_DefaultType UMETA(DisplayName = "DefaultType")
+
+	,BT_Freezer UMETA(DisplayName = "Freezer")
+
+	,BT_Speeder UMETA(DisplayName = "Speeder")
+
+
+};
+
+
 //FWD Declarations
 
 class AMovingPlatformBase;
@@ -34,6 +48,10 @@ public:
 
 	//PROPERTIES
 
+protected:
+
+	UPROPERTY(EditAnywhere, Category = "ButtonBase")
+		EButtonType ButtonType = EButtonType::BT_DefaultType;
 
 	//ThePlatform the Button is going to interact with.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ButtonBase")
@@ -52,7 +70,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly , Category = "ButtonBase" , meta = (DisplayName = "IsPositionOnly"))
 	bool bIsPositionOnly;
 
-	/*Determines wether the button has a timer which deactivates the function activated when pushed the button*/
+	/*Determines whether the button has a timer which deactivates the function activated when pushed the button*/
 	UPROPERTY(EditAnywhere , BlueprintReadOnly,  Category = "ButtonBase" , meta=(DisplayName ="HasTimer"))
 	bool bHasTimer;
 
@@ -60,8 +78,12 @@ public:
 	UPROPERTY(EditAnywhere , Category = "ButtonBase" , meta = (DisplayName = "DeactivationTime"))
 	float fActivatedTime;
 
-	UPROPERTY(EditDefaultsOnly, Category= "ButtonBase" ,meta = (DisplayName = "IsCollaborative") )
+	UPROPERTY(EditDefaultsOnly, Category= "CollaborativeButtonBase" ,meta = (DisplayName = "IsCollaborative") )
 	bool bIsCollaborative;
+
+	
+
+	
 
 
 	FTimerHandle TimeHandle;
@@ -70,6 +92,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent , meta = (DisplayName = "On Timer Finish"))
 	void OnTimerFinish();
+
+
 
 
 

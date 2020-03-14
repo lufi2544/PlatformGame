@@ -11,6 +11,17 @@
 
 class ATargetPointBase;
 
+UENUM(BlueprintType)
+enum class EPlatformType : uint8
+{
+	PT_Default UMETA(DisplayName = "DefaultType")
+
+	,PT_MoveAndStop UMETA(DisplayName = "Move and Stop")
+
+	,PT_Stopping UMETA(DisplayName = "Stopping")
+
+};
+
 
 USTRUCT(BlueprintType)
 
@@ -20,12 +31,10 @@ struct FMySparseClassData
 
 
 		FMySparseClassData()
-		: bIsCollaborative(false)
-		, nPlatformDefaultName("NAME_None")
+		: nPlatformDefaultName("NAME_None")
 		{}
 
-	UPROPERTY(EditDefaultsOnly, Category ="PlatformBase" , meta = (DisplayName = "Is Collaborative"))
-	bool bIsCollaborative;
+	
 
 	UPROPERTY(EditDefaultsOnly , Category ="PlatformBase" , meta = (DisplayName = "Platform Default Name"))
 	FName nPlatformDefaultName;
@@ -59,8 +68,6 @@ private:
 private:
 
 
-	UPROPERTY()
-	bool bIsCollaborative_DEPRECATED;
 
 	UPROPERTY()
 	FName nDefaultPlatformName_DEPRECATED;
@@ -82,55 +89,28 @@ public:
 
 	//PROPERTIES
 
+	
+
 
 	
-private:
-
-	//Targets that the platform will move between
-	UPROPERTY(EditAnywhere, Category = "PlatformBase")
-		TArray<ATargetPointBase*>TargetsToReach;
-
-	// If true The Platform will move between the given Targets with a random movement
-	UPROPERTY(EditAnywhere, Category = "PlatformBase")
-		bool RandomMovementToTargets;
-
-	UPROPERTY(EditAnywhere, Category = "PlatformBase", meta = (DisplayName = "CanMove"))
-		bool bCanMove;
-
-	UPROPERTY(EditAnywhere, Category = "PlatformBase", meta = (ClampMin = 0.f), meta = (ClampMax = 500.f), meta = (DisplayName = "Speed"))
-		float fSpeed = 50.f;
-
-	//Changes the mode to as if a button would have triggered the current platform
-	UPROPERTY(EditAnywhere, Category = "PlatformBase")
-		bool IsButtonActive;
-
-
-	//Targets that the platform will move between when we push a button
-	TArray<ATargetPointBase*>TargetsToReachOnButonPush;
-
-	bool bIsReaching = false;
-
-	int32 ArrayCounter = 0;
-
-	ATargetPointBase* InitialTarget;
-
-	ATargetPointBase* LastTarget;
-
-	ATargetPointBase* TargetReaching;
-
-	ATargetPointBase* LastTargetReached;
-
-	bool bIsButtonActivated = false;
-
-
-
 
 	//GETTERS
 
 public:
 
+	UPROPERTY(EditAnywhere, Category = "PlatformBase")
+		EPlatformType PlatformType UMETA(DisplayName = "Platform Type");
+
+
+
+
+
+
+
 	UFUNCTION(BlueprintPure, Category = "PlatformBase")
 		bool GetIsCollaborativeState();
+
+	void SetIscollaborative(bool b);
 
 	UFUNCTION(BlueprintPure, Category = "PlatformBase")
 		bool GetIsButtonActivated();
@@ -155,6 +135,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PlatformBase")
 		void SetbCanMove(bool bNewMovementState);
 
+	UFUNCTION(BlueprintPure , Category = "PlatformBase")
+	TArray<ATargetPointBase*> GetLastTargetsReached();
+
+
+	UFUNCTION(BlueprintCallable , Category = "PlatformBase")
+	void StopPlatformMovement();
+
+
+	UFUNCTION(BlueprintCallable , Category ="PlatformBase")
+	void  StartPlatformMovement();
+
 
 	UFUNCTION(BlueprintPure, Category = "PlatformBase")
 		TArray<ATargetPointBase*> GetTargetsToReachOnPush();
@@ -162,6 +153,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlatformBase")
 		void SetTargetsToReachOnPush(TArray<ATargetPointBase*> NewTargets);
+
+	
+		
+
+
+
+
+
 
 
 
@@ -174,6 +173,11 @@ public:
 	UFUNCTION(BlueprintCallable, category = "PlatformBase")
 		bool OnControlButtonPushed(bool bIsButtonactive);
 
+	UFUNCTION(BlueprintCallable, Category = "PlatformBase")
+		void StartCollaborativeMovement(TArray<ATargetPointBase*>Targets);
+
+	UFUNCTION(BlueprintCallable, Category = "CollaborativePlatform")
+		void StartBaseMovement(TArray<ATargetPointBase*>Targets ,  bool bHasRandomMovement);
 	
 
 
@@ -198,6 +202,63 @@ public:
 
 
 	//DELEGATES
+
+	protected:
+
+		UPROPERTY(BlueprintReadOnly, Category = "CollaborativePlatformBase", meta = (DisplayName = "Is Collaborative"))
+			bool bIsCollaborative;
+
+			//Targets that the platform will move between
+		UPROPERTY(EditAnywhere, Category = "PlatformBase")
+			TArray<ATargetPointBase*>TargetsToReach;
+
+		UPROPERTY(BlueprintReadOnly, Category = "PlatformBase")
+			TArray<ATargetPointBase*>LastTargetsReached;
+
+	private:
+
+	
+
+		
+
+		// If true The Platform will move between the given Targets with a random movement
+		UPROPERTY(EditAnywhere, Category = "PlatformBase")
+			bool RandomMovementToTargets;
+
+		UPROPERTY(EditAnywhere, Category = "PlatformBase", meta = (DisplayName = "CanMove"))
+			bool bCanMove;
+
+		UPROPERTY(EditAnywhere, Category = "PlatformBase", meta = (ClampMin = 0.f), meta = (ClampMax = 500.f), meta = (DisplayName = "Speed"))
+			float fSpeed = 50.f;
+
+		//Changes the mode to as if a button would have triggered the current platform
+		UPROPERTY(EditAnywhere, Category = "PlatformBase")
+			bool IsButtonActive;
+
+
+
+
+	
+
+
+
+
+		//Targets that the platform will move between when we push a button
+		TArray<ATargetPointBase*>TargetsToReachOnButonPush;
+
+		bool bIsReaching = false;
+
+		int32 ArrayCounter = 0;
+
+		ATargetPointBase* InitialTarget;
+
+		ATargetPointBase* LastTarget;
+
+		ATargetPointBase* TargetReaching;
+
+		ATargetPointBase* LastTargetReached;
+
+		bool bIsButtonActivated = false;
 
 
 

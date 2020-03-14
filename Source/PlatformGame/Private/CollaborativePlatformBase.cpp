@@ -3,3 +3,12 @@
 
 #include "CollaborativePlatformBase.h"
 
+
+ACollaborativePlatformBase::ACollaborativePlatformBase() 
+{
+
+	bIsCollaborative = true;
+
+	
+
+}

@@ -37,7 +37,7 @@ void UPlatformPuzzleGameInstance::Host()
 	
 	if (!ensure(World)) { return; }
 
-	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap");
 
 
 }
