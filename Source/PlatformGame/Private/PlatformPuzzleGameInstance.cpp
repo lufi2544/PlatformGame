@@ -3,6 +3,7 @@
 
 #include "PlatformPuzzleGameInstance.h"
 
+#include "GameFramework/PlayerController.h"
 
 #include "Engine/Engine.h"
 
@@ -36,7 +37,7 @@ void UPlatformPuzzleGameInstance::Host()
 	
 	if (!ensure(World)) { return; }
 
-	World->ServerTravel("World'/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap.ThirdPersonExampleMap' listen");
+	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
 
 
 }
@@ -45,5 +46,11 @@ void UPlatformPuzzleGameInstance::Join(const FString IP)
 {
 
 	Engine->AddOnScreenDebugMessage(0, 5.f, FColor::Red,FString::Printf(TEXT("Joining %s"),*IP));
+
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+
+	if (!ensure(PlayerController)) { return; }
+
+	PlayerController->ClientTravel(IP, ETravelType::TRAVEL_Absolute);
 
 }

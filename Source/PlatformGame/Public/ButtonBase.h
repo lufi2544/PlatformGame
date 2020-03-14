@@ -49,11 +49,11 @@ public:
 	/*If true the current button just affects the platform if the player is on top of it.
 	  If Has Timer is activated, it will be automatically desactivated.
 	*/
-	UPROPERTY(EditAnywhere, Category = "ButtonBase" , meta = (DisplayName = "IsPositionOnly"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly , Category = "ButtonBase" , meta = (DisplayName = "IsPositionOnly"))
 	bool bIsPositionOnly;
 
 	/*Determines wether the button has a timer which deactivates the function activated when pushed the button*/
-	UPROPERTY(EditAnywhere , BlueprintReadWrite,  Category = "ButtonBase" , meta=(DisplayName ="HasTimer"))
+	UPROPERTY(EditAnywhere , BlueprintReadOnly,  Category = "ButtonBase" , meta=(DisplayName ="HasTimer"))
 	bool bHasTimer;
 
 	/*Time that the activated function by the button will last (if HasTimer is true) */
