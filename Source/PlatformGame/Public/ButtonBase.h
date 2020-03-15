@@ -46,6 +46,33 @@ public:
 	//GETTERS
 
 
+	UFUNCTION(BlueprintPure , Category = "ButtonBase")
+	EButtonType GetButtonType();
+
+
+	UFUNCTION(BlueprintCallable , Category = "EffectButton")
+		void ApplyFreezeToPlatform(bool bNewPlatformState ,bool bButtonHasTimer , float fTimerTime);
+
+
+	UFUNCTION(BlueprintCallable, Category = "EffectButton")
+		void UnfreezePlatform();
+
+
+	UFUNCTION(BlueprintCallable, Category = "EffectButton")
+		void ApplySpeedToPlatform(float fNewSpeed);
+	
+
+	UFUNCTION(BlueprintCallable, Category = "EffectButton")
+		void UnapplyuSpeedToPlatform();
+
+
+	UFUNCTION(BlueprintCallable , Category = "ButtonBase")
+	void ApplyEffect();
+
+	   
+	UFUNCTION(BlueprintCallable, Category = "ButtonBase")
+		void UnapplyEffect();
+
 	//PROPERTIES
 
 protected:
@@ -81,6 +108,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category= "CollaborativeButtonBase" ,meta = (DisplayName = "IsCollaborative") )
 	bool bIsCollaborative;
 
+
+	UPROPERTY(EditAnywhere, Category = "ButtonEffect")
+	float fSpeedToAdd UMETA(DisplayName = "SpeedToAdd");
+	
+
 	
 
 	
@@ -88,10 +120,14 @@ protected:
 
 	FTimerHandle TimeHandle;
 
+	FTimerHandle EffectTimer;
+
 	//FUNCTIONS
 
 	UFUNCTION(BlueprintImplementableEvent , meta = (DisplayName = "On Timer Finish"))
 	void OnTimerFinish();
+
+
 
 
 

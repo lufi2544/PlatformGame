@@ -110,7 +110,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "PlatformBase")
 		bool GetIsCollaborativeState();
 
-	void SetIscollaborative(bool b);
+	
 
 	UFUNCTION(BlueprintPure, Category = "PlatformBase")
 		bool GetIsButtonActivated();
@@ -126,6 +126,22 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlatformBase")
 		void SetTargetsToReach(TArray<ATargetPointBase*> NewTargets);
+
+
+	UFUNCTION(BlueprintPure , Category = "PlatformBase")
+	float GetSpeed();
+
+
+	UFUNCTION(BlueprintCallable, Category = "PlatformBase")
+		void SetSpeed(float fNewSpeed);
+
+
+	UFUNCTION(BlueprintPure, Category = "PlatformBase")
+		float GetLastSpeed();
+
+
+	UFUNCTION(BlueprintCallable, Category = "PlatformBase")
+		void SetLastSpeed(float fNewLastSpeed);
 
 
 	UFUNCTION(BlueprintPure, Category = "PlatformBase")
@@ -178,6 +194,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "CollaborativePlatform")
 		void StartBaseMovement(TArray<ATargetPointBase*>Targets ,  bool bHasRandomMovement);
+
+	UFUNCTION(BlueprintCallable, Category = "PlatformBase")
+		void AddSpeed(float fSpeedToadd);
 	
 
 
@@ -245,6 +264,8 @@ public:
 
 		//Targets that the platform will move between when we push a button
 		TArray<ATargetPointBase*>TargetsToReachOnButonPush;
+
+		float fLastSpeed;
 
 		bool bIsReaching = false;
 

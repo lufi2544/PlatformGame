@@ -75,11 +75,6 @@ bool AMovingPlatformBase::GetIsCollaborativeState()
 }
 
 
-void AMovingPlatformBase::SetIscollaborative(bool b)
-{
-	bIsCollaborative = b;
-}
-
 bool AMovingPlatformBase::GetIsButtonActivated()
 {
 	return bIsButtonActivated;
@@ -108,6 +103,28 @@ void AMovingPlatformBase::SetTargetsToReach(TArray<ATargetPointBase*> NewTargets
 	
 	}
 	
+}
+
+float AMovingPlatformBase::GetSpeed()
+{
+	return fSpeed;
+}
+
+void AMovingPlatformBase::SetSpeed(float fNewSpeed)
+{
+
+	fSpeed = fNewSpeed;
+
+}
+
+float AMovingPlatformBase::GetLastSpeed()
+{
+	return fLastSpeed;
+}
+
+void AMovingPlatformBase::SetLastSpeed(float fNewLastSpeed)
+{
+	fLastSpeed = fNewLastSpeed;
 }
 
 bool AMovingPlatformBase::GetCanMove()
@@ -397,6 +414,13 @@ void AMovingPlatformBase::StartBaseMovement(TArray<ATargetPointBase*>Targets, bo
 
 
 
+}
+
+void AMovingPlatformBase::AddSpeed(float fSpeedToadd)
+{
+	fLastSpeed = fSpeed;
+
+	fSpeed += fSpeedToadd;
 }
 
 //DELEGATES

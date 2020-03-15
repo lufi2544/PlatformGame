@@ -51,6 +51,92 @@ void AButtonBase::BeginPlay()
 
 
 
+EButtonType AButtonBase::GetButtonType()
+{
+
+	return ButtonType;
+
+}
+
+void AButtonBase::ApplyFreezeToPlatform(bool bNewPlatformState ,bool bPlatformHasTimer , float fTimerTime)
+{
+	MovingPlatformToInteract->SetbCanMove(bNewPlatformState);	
+	
+}
+
+void AButtonBase::UnfreezePlatform()
+{
+
+	MovingPlatformToInteract->SetbCanMove(true);
+
+	UE_LOG(LogTemp , Warning , TEXT("Unfreezing!"));
+
+}
+
+void AButtonBase::ApplySpeedToPlatform(float fNewSpeed)
+{
+
+	MovingPlatformToInteract->AddSpeed(fNewSpeed);
+
+}
+
+
+
+void AButtonBase::UnapplyuSpeedToPlatform()
+{
+
+	MovingPlatformToInteract->SetSpeed(MovingPlatformToInteract->GetLastSpeed());
+
+}
+
+void AButtonBase::ApplyEffect()
+{
+
+	if (ButtonType == EButtonType::BT_Freezer)
+	{
+		ApplyFreezeToPlatform(false, bHasTimer, fActivatedTime);
+	}
+
+
+	if (ButtonType == EButtonType::BT_Speeder) 
+	{
+	
+		ApplySpeedToPlatform(fSpeedToAdd);
+	
+	}
+
+
+
+		if (bHasTimer)
+		{
+
+			GetWorldTimerManager().SetTimer(TimeHandle, this, &AButtonBase::OnUnpushButton, fActivatedTime, false);
+
+		}
+
+	
+
+}
+
+void AButtonBase::UnapplyEffect()
+{
+	if (ButtonType == EButtonType::BT_Freezer) 
+	{
+	
+		UnfreezePlatform();
+
+	}
+
+	if (ButtonType == EButtonType::BT_Speeder) 
+	{
+	
+		UnapplyuSpeedToPlatform();
+	
+	}
+
+
+}
+
 // Called every frame
 void AButtonBase::Tick(float DeltaTime)
 {
@@ -118,63 +204,38 @@ void AButtonBase::DesactiveButton(bool bButtonState)
 void AButtonBase::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 
-	if (MovingPlatformToInteract->GetIsCollaborativeState())
-	{
 
-		ActiveButton(true);
-
-		UE_LOG(LogTemp , Warning ,TEXT("Collaborative"));
-
-		MovingPlatformToInteract->SetbCanMove(true);
-
-	}
-	else
-	{
-
-		UE_LOG(LogTemp, Warning, TEXT("Collaborative"));
-
-		if (TargetsToReachOnActivation.Num() > 0)
-
-			OnPushButton();
+	
 
 
-		if (bHasTimer)
-		{
-
-			GetWorldTimerManager().SetTimer(TimeHandle, this, &AButtonBase::OnUnpushButton, fActivatedTime, false);
-
-		}
-
-	}
+	
 }
 
 
 void AButtonBase::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) 
 {
-	if (MovingPlatformToInteract->GetIsCollaborativeState())
+	if (!bHasTimer) 
 	{
-
-		DesactiveButton(false);
-
-		MovingPlatformToInteract->SetbCanMove(true);
-
-	}
-	else
-	{
-
-
-
-		if (bIsPositionOnly)
+		if (MovingPlatformToInteract->GetIsCollaborativeState())
 		{
 
-			OnUnpushButton();
+			DesactiveButton(false);
+
+			MovingPlatformToInteract->SetbCanMove(true);
+
+		}
+		else
+		{
+
+
 
 			
 
+
 		}
-
-
 	}
+
+	
 
 
 }
