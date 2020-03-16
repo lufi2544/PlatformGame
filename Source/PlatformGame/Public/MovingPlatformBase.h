@@ -20,6 +20,12 @@ enum class EPlatformType : uint8
 
 	,PT_Stopping UMETA(DisplayName = "Stopping")
 
+	,PT_Collaborative UMETA(DisplayName = "Collaborative")
+
+
+
+	
+
 };
 
 
@@ -101,6 +107,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "PlatformBase")
 		EPlatformType PlatformType UMETA(DisplayName = "Platform Type");
 
+	//Changes the mode to as if a button would have triggered the current platform
+	UPROPERTY(EditAnywhere, BlueprintReadWrite , Category = "PlatformBase")
+		bool IsButtonActive;
 
 
 
@@ -126,6 +135,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlatformBase")
 		void SetTargetsToReach(TArray<ATargetPointBase*> NewTargets);
+
+
+	UFUNCTION(BlueprintPure , Category = "PlatformBase")
+		TArray<ATargetPointBase*> GetInitialTargetsReached();
 
 
 	UFUNCTION(BlueprintPure , Category = "PlatformBase")
@@ -197,6 +210,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "PlatformBase")
 		void AddSpeed(float fSpeedToadd);
+
+	UFUNCTION(BlueprintCallable , Category = "CollaborativePlatform")
+		void AddCollaborativeEffects();
+
+	UFUNCTION(BlueprintCallable, Category = "CollaborativePlatform")
+		void RemoveCollaborativeEffects();
 	
 
 
@@ -234,6 +253,9 @@ public:
 		UPROPERTY(BlueprintReadOnly, Category = "PlatformBase")
 			TArray<ATargetPointBase*>LastTargetsReached;
 
+		UPROPERTY(BlueprintReadOnly, Category = "PlatformBase")
+			TArray<ATargetPointBase*>InitialTargetsReached;
+
 	private:
 
 	
@@ -250,9 +272,7 @@ public:
 		UPROPERTY(EditAnywhere, Category = "PlatformBase", meta = (ClampMin = 0.f), meta = (ClampMax = 500.f), meta = (DisplayName = "Speed"))
 			float fSpeed = 50.f;
 
-		//Changes the mode to as if a button would have triggered the current platform
-		UPROPERTY(EditAnywhere, Category = "PlatformBase")
-			bool IsButtonActive;
+		
 
 
 

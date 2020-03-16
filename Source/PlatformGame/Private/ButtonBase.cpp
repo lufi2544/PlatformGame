@@ -54,11 +54,11 @@ void AButtonBase::BeginPlay()
 EButtonType AButtonBase::GetButtonType()
 {
 
-	return ButtonType;
+	return ButtonMainType;
 
 }
 
-void AButtonBase::ApplyFreezeToPlatform(bool bNewPlatformState ,bool bPlatformHasTimer , float fTimerTime)
+void AButtonBase::ApplyFreezeToPlatform(bool bNewPlatformState )
 {
 	MovingPlatformToInteract->SetbCanMove(bNewPlatformState);	
 	
@@ -82,27 +82,58 @@ void AButtonBase::ApplySpeedToPlatform(float fNewSpeed)
 
 
 
-void AButtonBase::UnapplyuSpeedToPlatform()
+void AButtonBase::UnapplySpeedToPlatform()
 {
 
 	MovingPlatformToInteract->SetSpeed(MovingPlatformToInteract->GetLastSpeed());
 
 }
 
+void AButtonBase::ChangeTargetsToPlatform()
+{
+
+	MovingPlatformToInteract->SetTargetsToReach(TargetsToReachOnActivation);
+
+}
+
+void AButtonBase::UnchangeTargetsToPlatform()
+{
+
+	MovingPlatformToInteract->SetTargetsToReach(MovingPlatformToInteract->GetInitialTargetsReached());
+
+}
+
 void AButtonBase::ApplyEffect()
 {
 
-	if (ButtonType == EButtonType::BT_Freezer)
+	if (ButtonMainType == EButtonType::BT_Freezer || SecundaryButtonType == EButtonType::BT_Freezer)
 	{
-		ApplyFreezeToPlatform(false, bHasTimer, fActivatedTime);
+		ApplyFreezeToPlatform(false);
 	}
 
 
-	if (ButtonType == EButtonType::BT_Speeder) 
+	if (ButtonMainType == EButtonType::BT_Speeder || SecundaryButtonType == EButtonType::BT_Speeder)
 	{
 	
 		ApplySpeedToPlatform(fSpeedToAdd);
 	
+	}
+
+	if (ButtonMainType == EButtonType::BT_Collaborative || SecundaryButtonType == EButtonType::BT_Collaborative) 
+	{
+	
+		
+		MovingPlatformToInteract->AddCollaborativeEffects();
+
+	
+	
+	}
+
+	if (ButtonMainType == EButtonType::BT_TargetChanger || SecundaryButtonType == EButtonType::BT_TargetChanger) 
+	{
+	
+		ChangeTargetsToPlatform();
+
 	}
 
 
@@ -115,26 +146,42 @@ void AButtonBase::ApplyEffect()
 		}
 
 	
-
+		bIsButtonActive = true;
 }
 
 void AButtonBase::UnapplyEffect()
 {
-	if (ButtonType == EButtonType::BT_Freezer) 
+	if (ButtonMainType == EButtonType::BT_Freezer || SecundaryButtonType == EButtonType::BT_Freezer)
 	{
 	
 		UnfreezePlatform();
 
 	}
 
-	if (ButtonType == EButtonType::BT_Speeder) 
+	if (ButtonMainType == EButtonType::BT_Speeder || SecundaryButtonType == EButtonType::BT_Speeder)
 	{
 	
-		UnapplyuSpeedToPlatform();
+		UnapplySpeedToPlatform();
+	
+	}
+
+	if (ButtonMainType == EButtonType::BT_Collaborative || SecundaryButtonType == EButtonType::BT_Collaborative)
+	{
+	
+		MovingPlatformToInteract->RemoveCollaborativeEffects();
+	
+	}
+
+	if (ButtonMainType == EButtonType::BT_TargetChanger || SecundaryButtonType == EButtonType::BT_TargetChanger)
+	{
+	
+		UnchangeTargetsToPlatform();
 	
 	}
 
 
+
+	bIsButtonActive = false;
 }
 
 // Called every frame
@@ -219,9 +266,9 @@ void AButtonBase::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent
 		if (MovingPlatformToInteract->GetIsCollaborativeState())
 		{
 
-			DesactiveButton(false);
+			
 
-			MovingPlatformToInteract->SetbCanMove(true);
+		
 
 		}
 		else

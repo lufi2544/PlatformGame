@@ -4,6 +4,7 @@
 #include "MovingPlatformBase.h"
 
 #include "TargetPointBase.h"
+#include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Engine/BlueprintGeneratedClass.h"
 
@@ -58,6 +59,8 @@ void AMovingPlatformBase::BeginPlay()
 	{
 		SetReplicates(true);
 		SetReplicateMovement(true);
+
+		InitialTargetsReached = TargetsToReach;
 	}
 
 
@@ -85,6 +88,8 @@ void AMovingPlatformBase::SetIsButtonActivated(bool bNewState)
 
 	bIsButtonActivated = bNewState;
 
+	UE_LOG(LogTemp, Error, TEXT("%i"),bIsButtonActivated);
+
 }
 
 TArray<ATargetPointBase*> AMovingPlatformBase::GetTargetsToReach()
@@ -95,14 +100,20 @@ TArray<ATargetPointBase*> AMovingPlatformBase::GetTargetsToReach()
 void AMovingPlatformBase::SetTargetsToReach(TArray<ATargetPointBase*> NewTargets)
 {
 
-	if (TargetsToReach.Num() > 0) 
+	if (NewTargets.Num() > 0) 
 	{
+
 		LastTargetsReached = TargetsToReach;
 
 		TargetsToReach = NewTargets;
 	
 	}
 	
+}
+
+TArray<ATargetPointBase*> AMovingPlatformBase::GetInitialTargetsReached()
+{
+	return InitialTargetsReached;
 }
 
 float AMovingPlatformBase::GetSpeed()
@@ -208,16 +219,20 @@ bool AMovingPlatformBase::PlatformMoveToTatgets(TArray<ATargetPointBase*> Target
 
 	if (Targets.Num() > 0) 
 	{
-		if (!bIsCollaborative) 
+		if (PlatformType == EPlatformType::PT_Collaborative) 
+		{
+		
+			StartCollaborativeMovement(Targets);
+
+			
+		}
+	
+
+		if (PlatformType == EPlatformType::PT_Default) 
 		{
 		
 			StartBaseMovement(Targets, bHasRandomMovement);
-		
-		}
-		else
-		{
 
-			StartCollaborativeMovement(Targets);
 		}
 	
 	
@@ -260,6 +275,8 @@ void AMovingPlatformBase::StartCollaborativeMovement(TArray<ATargetPointBase*>Ta
 
 		TargetReaching = Targets[ArrayCounter];
 
+		
+
 
 
 	}
@@ -268,6 +285,8 @@ void AMovingPlatformBase::StartCollaborativeMovement(TArray<ATargetPointBase*>Ta
 		if (bIsButtonActivated)
 		{
 			bCanMove = true;
+
+			
 
 			PlatformGo(TargetReaching);
 
@@ -304,8 +323,8 @@ void AMovingPlatformBase::StartCollaborativeMovement(TArray<ATargetPointBase*>Ta
 			if (PlatformGo(InitialTarget))
 			{
 				bCanMove = false;
-				LastTargetReached = InitialTarget;
-
+				
+				LastTargetReached = TargetReaching;
 
 			}
 
@@ -421,6 +440,30 @@ void AMovingPlatformBase::AddSpeed(float fSpeedToadd)
 	fLastSpeed = fSpeed;
 
 	fSpeed += fSpeedToadd;
+}
+
+void AMovingPlatformBase::AddCollaborativeEffects()
+{
+
+	bIsButtonActivated = true;
+
+	bCanMove = true;
+
+}
+
+void AMovingPlatformBase::RemoveCollaborativeEffects()
+{
+
+	bCanMove = true;
+
+	bIsButtonActivated = false;
+
+	ArrayCounter = 0;
+
+	bIsReaching = false;
+
+	
+
 }
 
 //DELEGATES

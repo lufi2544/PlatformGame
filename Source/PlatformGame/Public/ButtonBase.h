@@ -11,11 +11,17 @@
 UENUM(BlueprintType)
 enum class EButtonType : uint8
 {
-	BT_DefaultType UMETA(DisplayName = "DefaultType")
+	BT_TargetChanger UMETA(DisplayName = "TargetsChanger")
 
 	,BT_Freezer UMETA(DisplayName = "Freezer")
 
 	,BT_Speeder UMETA(DisplayName = "Speeder")
+
+	,BT_Collaborative UMETA(DisplayName = "Collaborative")
+
+	,BT_TypeChanger UMETA(DisplayName = "Type Changer")
+
+	,BT_None UMETA(DisplayName = None)
 
 
 };
@@ -50,8 +56,18 @@ public:
 	EButtonType GetButtonType();
 
 
+
+
+	UFUNCTION(BlueprintCallable, Category = "ButtonBase")
+		void ApplyEffect();
+
+
+	UFUNCTION(BlueprintCallable, Category = "ButtonBase")
+		void UnapplyEffect();
+
+
 	UFUNCTION(BlueprintCallable , Category = "EffectButton")
-		void ApplyFreezeToPlatform(bool bNewPlatformState ,bool bButtonHasTimer , float fTimerTime);
+		void ApplyFreezeToPlatform(bool bNewPlatformState );
 
 
 	UFUNCTION(BlueprintCallable, Category = "EffectButton")
@@ -63,22 +79,29 @@ public:
 	
 
 	UFUNCTION(BlueprintCallable, Category = "EffectButton")
-		void UnapplyuSpeedToPlatform();
+		void UnapplySpeedToPlatform();
 
 
-	UFUNCTION(BlueprintCallable , Category = "ButtonBase")
-	void ApplyEffect();
+	UFUNCTION(BlueprintCallable, Category = "EffectButton")
+		void ChangeTargetsToPlatform();
 
-	   
-	UFUNCTION(BlueprintCallable, Category = "ButtonBase")
-		void UnapplyEffect();
+
+	UFUNCTION(BlueprintCallable, Category = "EffectButton")
+		void UnchangeTargetsToPlatform();
+
+
+
+
 
 	//PROPERTIES
 
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "ButtonBase")
-		EButtonType ButtonType = EButtonType::BT_DefaultType;
+		EButtonType ButtonMainType = EButtonType::BT_TargetChanger ;
+
+	UPROPERTY(EditAnywhere, Category = "ButtonBase")
+		EButtonType SecundaryButtonType = EButtonType::BT_None;
 
 	//ThePlatform the Button is going to interact with.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ButtonBase")
@@ -105,8 +128,9 @@ protected:
 	UPROPERTY(EditAnywhere , Category = "ButtonBase" , meta = (DisplayName = "DeactivationTime"))
 	float fActivatedTime;
 
-	UPROPERTY(EditDefaultsOnly, Category= "CollaborativeButtonBase" ,meta = (DisplayName = "IsCollaborative") )
-	bool bIsCollaborative;
+	UPROPERTY(BlueprintReadOnly , Category = "ButtonBase" , meta = (DisplayName = "IsButtonActive"))
+	bool bIsButtonActive;
+
 
 
 	UPROPERTY(EditAnywhere, Category = "ButtonEffect")
@@ -124,6 +148,7 @@ protected:
 
 	//FUNCTIONS
 
+/*	Event That is Trigger when the effect timer has reached to the end, if the button has one.*/
 	UFUNCTION(BlueprintImplementableEvent , meta = (DisplayName = "On Timer Finish"))
 	void OnTimerFinish();
 
