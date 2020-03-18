@@ -34,10 +34,13 @@ void AMovingPlatformBase::Tick(float DeltaTime)
 			if (!IsButtonActive)
 			{
 
+				UE_LOG(LogTemp, Error, TEXT("%i") , bIsReaching);
 				PlatformMoveToTatgets(TargetsToReach, RandomMovementToTargets);
 			}
 			else
 			{
+
+			
 				PlatformMoveToTatgets(TargetsToReachOnButonPush, RandomMovementToTargets);
 			}
 		}
@@ -260,7 +263,7 @@ bool AMovingPlatformBase::OnControlButtonPushed(bool bIsButtonActive)
 
 void AMovingPlatformBase::StartCollaborativeMovement(TArray<ATargetPointBase*>Targets)
 {
-
+	UE_LOG(LogTemp, Error, TEXT("Collaborative"));
 	bool bSuccess = false;
 
 	if (!bIsReaching)
@@ -346,7 +349,8 @@ void AMovingPlatformBase::StartBaseMovement(TArray<ATargetPointBase*>Targets, bo
 {
 	bool bSuccess = false;
 
-	
+
+	UE_LOG(LogTemp, Error, TEXT("Base"));
 	
 		if (!bHasRandomMovement)
 		{

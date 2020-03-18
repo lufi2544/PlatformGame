@@ -98,10 +98,13 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "ButtonBase")
-		EButtonType ButtonMainType = EButtonType::BT_TargetChanger ;
+	EButtonType ButtonMainType = EButtonType::BT_TargetChanger ;
 
 	UPROPERTY(EditAnywhere, Category = "ButtonBase")
-		EButtonType SecundaryButtonType = EButtonType::BT_None;
+	EButtonType SecundaryButtonType = EButtonType::BT_None;
+
+	UPROPERTY(EditAnywhere , Category = "ButtonBase")
+	bool bChangePlatfotmTypeOnChange UMETA(DisplayName = "Change Platform Type On TargetChange");
 
 	//ThePlatform the Button is going to interact with.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ButtonBase")

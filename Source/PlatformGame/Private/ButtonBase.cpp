@@ -94,12 +94,27 @@ void AButtonBase::ChangeTargetsToPlatform()
 
 	MovingPlatformToInteract->SetTargetsToReach(TargetsToReachOnActivation);
 
+	if (bChangePlatfotmTypeOnChange) 
+	{
+	
+		MovingPlatformToInteract->PlatformType = EPlatformType::PT_Default;
+
+		MovingPlatformToInteract->SetbCanMove(true);
+
+	
+	}
+
 }
 
 void AButtonBase::UnchangeTargetsToPlatform()
 {
 
 	MovingPlatformToInteract->SetTargetsToReach(MovingPlatformToInteract->GetInitialTargetsReached());
+	if (bChangePlatfotmTypeOnChange) {
+
+		MovingPlatformToInteract->PlatformType = EPlatformType::PT_Collaborative;
+
+	}
 
 }
 

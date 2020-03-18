@@ -230,7 +230,7 @@ public:
 
 
 
-
+	bool bIsReaching = false;
 
 	//VARIABLES
 
@@ -287,7 +287,7 @@ public:
 
 		float fLastSpeed;
 
-		bool bIsReaching = false;
+		
 
 		int32 ArrayCounter = 0;
 
