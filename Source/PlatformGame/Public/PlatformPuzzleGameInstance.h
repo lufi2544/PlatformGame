@@ -25,6 +25,9 @@ public:
 		/*FUNCTIONS*/
 	
 
+		UFUNCTION(BlueprintCallable , Category = "GameBase")
+		void LoadMenu();
+
 		UFUNCTION(Exec)
 		void Host();
 
@@ -35,4 +38,9 @@ public:
 private:
 
 	UEngine* Engine = nullptr;
+
+	TSubclassOf<UUserWidget>UserMenuWidgetClass;
+
+	
+	
 };

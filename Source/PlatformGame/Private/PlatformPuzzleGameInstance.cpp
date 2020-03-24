@@ -7,13 +7,56 @@
 
 #include "Engine/Engine.h"
 
+#include "UObject/ConstructorHelpers.h"
+
+#include "Components/Widget.h"
+#include "MovingPlatformBase.h"
+#include "ButtonBase.h"
+#include "Blueprint/UserWidget.h"
+#include "GameFramework/PlayerController.h"
+
 
 
 
 UPlatformPuzzleGameInstance::UPlatformPuzzleGameInstance(const FObjectInitializer& ObjectInitializer)
 {
+	static ConstructorHelpers::FClassFinder<UUserWidget>DefaultMenuWidget(TEXT("WidgetBlueprint'/Game/UI/MenuUI/WB_MainMenu'"));
+
+	if (!ensure(DefaultMenuWidget.Class)) { return; }
+
+	UserMenuWidgetClass = DefaultMenuWidget.Class;
+
+	UE_LOG(LogTemp, Error, TEXT("The Menu Widget Clss Name is %s"), *UserMenuWidgetClass->GetName());
+
+}
+
+void UPlatformPuzzleGameInstance::LoadMenu() 
+{
+
+	UUserWidget* wMenu = CreateWidget<UUserWidget>(this, UserMenuWidgetClass);
+
+	if (!ensure(wMenu)) { return; }
+
+	wMenu->AddToViewport();
+
+	if (!ensure(GetWorld()->GetFirstPlayerController())) { return; }
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
 
+	FInputModeUIOnly InputDataBase = FInputModeUIOnly();
+
+	InputDataBase.SetWidgetToFocus(wMenu->TakeWidget());
+
+	InputDataBase.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+	PlayerController->SetInputMode(InputDataBase);
+
+	PlayerController->bShowMouseCursor = true;
+	
+
+
+	
 }
 
 void UPlatformPuzzleGameInstance::Init() 
