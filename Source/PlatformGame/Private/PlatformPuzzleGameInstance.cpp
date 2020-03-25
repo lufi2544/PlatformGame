@@ -44,7 +44,7 @@ void UPlatformPuzzleGameInstance::LoadMenu()
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
 
-	FInputModeUIOnly InputDataBase = FInputModeUIOnly();
+	FInputModeUIOnly InputDataBase;
 
 	InputDataBase.SetWidgetToFocus(wMenu->TakeWidget());
 
