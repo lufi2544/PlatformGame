@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerController.h"
 
 #include "Engine/Engine.h"
-
+#include "PlatformGame/Menu System/MainMenu.h"
 #include "UObject/ConstructorHelpers.h"
 
 #include "Components/Widget.h"
@@ -20,7 +20,7 @@
 
 UPlatformPuzzleGameInstance::UPlatformPuzzleGameInstance(const FObjectInitializer& ObjectInitializer)
 {
-	static ConstructorHelpers::FClassFinder<UUserWidget>DefaultMenuWidget(TEXT("WidgetBlueprint'/Game/UI/MenuUI/WB_MainMenu'"));
+	static ConstructorHelpers::FClassFinder<UMainMenu>DefaultMenuWidget(TEXT("WidgetBlueprint'/Game/UI/MenuUI/WB_MainMenu'"));
 
 	if (!ensure(DefaultMenuWidget.Class)) { return; }
 
@@ -33,55 +33,43 @@ UPlatformPuzzleGameInstance::UPlatformPuzzleGameInstance(const FObjectInitialize
 void UPlatformPuzzleGameInstance::LoadMenu() 
 {
 
-	UUserWidget* wMenu = CreateWidget<UUserWidget>(this, UserMenuWidgetClass);
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (!ensure(PlayerController)) { return; }
+
+	UMainMenu* wMenu = CreateWidget<UMainMenu>(this, UserMenuWidgetClass);
 
 	if (!ensure(wMenu)) { return; }
 
-	wMenu->AddToViewport();
+	wMenu->AddToPlayerScreen();
 
-	if (!ensure(GetWorld()->GetFirstPlayerController())) { return; }
+	wMenu->SetMenuInterface(this);
 
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-
-
-	FInputModeUIOnly InputDataBase;
-
-	InputDataBase.SetWidgetToFocus(wMenu->TakeWidget());
-
-	InputDataBase.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
-	PlayerController->SetInputMode(InputDataBase);
-
-	PlayerController->bShowMouseCursor = true;
-	
-
-
-	
 }
 
 void UPlatformPuzzleGameInstance::Init() 
 {
 
-
 	Engine = GetEngine();
 
-	
-
 }
+
+
 
 
 void UPlatformPuzzleGameInstance::Host() 
 {
 
+
 	UWorld* World = GetWorld();
 
 	Engine->AddOnScreenDebugMessage(0, 5.f, FColor::Green, TEXT("Hosting!!"));
 
-	
 	if (!ensure(World)) { return; }
 
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap");
 
+	
 
 }
 
@@ -97,3 +85,4 @@ void UPlatformPuzzleGameInstance::Join(const FString IP)
 	PlayerController->ClientTravel(IP, ETravelType::TRAVEL_Absolute);
 
 }
+

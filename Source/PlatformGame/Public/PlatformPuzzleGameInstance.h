@@ -4,13 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+
+#include "PlatformGame/Menu System/Interfaces/MenuInterface.h"
+
 #include "PlatformPuzzleGameInstance.generated.h"
 
 /**
  * 
  */
+
+class UMainMenu;
+
 UCLASS()
-class PLATFORMGAME_API UPlatformPuzzleGameInstance : public UGameInstance
+class PLATFORMGAME_API UPlatformPuzzleGameInstance : public UGameInstance , public IMenuInterface
 {
 	GENERATED_BODY()
 
@@ -29,18 +35,29 @@ public:
 		void LoadMenu();
 
 		UFUNCTION(Exec)
-		void Host();
+		virtual void Host() override;
 
 		UFUNCTION(Exec)
-		void Join(const FString IP);
+		virtual void Join(const FString IP) override;
+
+
+		UMainMenu* wMenuWidget = nullptr;
 
 
 private:
+
+	
+
+
+
 
 	UEngine* Engine = nullptr;
 
 	TSubclassOf<UUserWidget>UserMenuWidgetClass;
 
+	APlayerController* pPlayerController;
+
+	
 	
 	
 };

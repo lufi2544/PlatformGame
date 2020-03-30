@@ -2,6 +2,7 @@
 
 
 #include "MainMenu.h"
+#include "PlatformPuzzleGameInstance.h"
 
 #include "Components/Button.h"
 
@@ -26,9 +27,35 @@ bool UMainMenu::Initialize()
 
 	UE_LOG(LogTemp, Warning, TEXT("Constrcted!"));
 
+	
+	SetMenuInterface(Cast<UPlatformPuzzleGameInstance>(GetGameInstance()));
 
 		return bSuccess;
 }
+
+void UMainMenu::SetUp() 
+{
+
+	this->AddToViewport();
+
+	if (!ensure(GetWorld()->GetFirstPlayerController())) { return; }
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+
+	
+
+
+}
+
+
+void UMainMenu::SetMenuInterface(IMenuInterface* mMenuInterface)
+{
+
+	MenuInterface = mMenuInterface;
+
+}
+
 
 //DELEGATES
 
@@ -36,13 +63,58 @@ bool UMainMenu::Initialize()
 void UMainMenu::OnHostButtontClicked()
 {
 
-	UE_LOG(LogTemp, Warning, TEXT("Pressing the Host  Button!"));
+	if (!ensure(MenuInterface)) { return; }
+
+	
+
+	MenuInterface->Host();
+	
+	
 
 }
 
 void UMainMenu::OnJoinButtonClicked() 
 {
 
-	UE_LOG(LogTemp , Warning , TEXT("The Join Button is being clicked!!"));
+	MenuInterface->Join( FString ("Hello"));
+
+
+}
+
+void UMainMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
+{
+
+
+	Super::OnLevelRemovedFromWorld( InLevel, InWorld);
+
+	FInputModeGameOnly InputDataBase;
+
+	GetOwningPlayer()->SetInputMode(InputDataBase);
+
+	GetOwningPlayer()->bShowMouseCursor = false;
+
+	RemoveFromViewport();
+
+	
+
+
+}
+
+void UMainMenu::NativeConstruct() 
+{
+	Super::NativeConstruct();
+
+	APlayerController* PlayerController = GetOwningPlayer();
+
+	FInputModeUIOnly InputDataBase;
+
+	InputDataBase.SetWidgetToFocus(this->TakeWidget());
+
+	InputDataBase.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+
+	PlayerController->SetInputMode(InputDataBase);
+
+	PlayerController->bShowMouseCursor = true;
+
 
 }
