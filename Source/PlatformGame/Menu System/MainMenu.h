@@ -11,6 +11,9 @@
 #include "MainMenu.generated.h"
 
 
+
+class UWidgetSwitcher;
+
 /**
  * 
  */
@@ -49,11 +52,38 @@ protected:
 
 
 private:
-		UPROPERTY( meta = (BindWidget))
-		class UButton* Join;
 
-		UPROPERTY( meta = (BindWidget))
-		class UButton* Host;
+	//MENUS
+	
+		UPROPERTY(meta = (BindWidget))
+		class UWidget* MainMenu;
+
+
+		UPROPERTY(meta = (BindWidget)) // It can be a UWidget, as long as you have the UWidget root you will be fine
+		class UWidget* JoinMenu;
+
+
+
+
+	//BUTTONS
+
+		UPROPERTY(meta = (BindWidget))
+		class UButton* JoinButton;
+
+		UPROPERTY(meta = (BindWidget))
+		class UButton* HostButton;
+
+		UPROPERTY(meta = (BindWidget))
+		class UButton* CancelButton;
+
+	
+
+	//COMPONENTS
+
+		UPROPERTY(meta = (BindWidget))
+		class UWidgetSwitcher* MenuSwitcher;
+		
+
 
 		IMenuInterface* MenuInterface = nullptr;
 
@@ -71,6 +101,10 @@ private:
 
 		UFUNCTION()
 		void OnJoinButtonClicked();
+
+		UFUNCTION()
+		void OnCancelButtonClicked();
+
 
 
 };
